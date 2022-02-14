@@ -11,7 +11,9 @@ const Home = ()=>{
          flex:1,
         backgroundColor: colors.theme.bg
      }}>
-         <Text>Home</Text>
+         <Text style={{
+             color: colors.theme.primary
+         }}>Home</Text>
      </View>
  );
 }

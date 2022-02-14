@@ -20,6 +20,7 @@ const colors = useContext(ThemeContext)
                 elevation:0,
                 height:70,
                 borderRadius:35,
+                borderTopColor: "transparent",
                 backgroundColor:colors.theme.bgContrast
             }
         })} >
