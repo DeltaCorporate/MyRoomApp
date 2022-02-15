@@ -1,19 +1,20 @@
 import React,{useContext} from "react";
 
 import { Text, View } from "react-native";
-import { ThemeContext } from "../context/globalStyles";
+import {ThemeContext} from "../context/Theme";
 
 
 const Login = ()=>{
     const colors = useContext(ThemeContext)
+    const {theme} = colors;
+
     return(
         <View style={{
             flex:1,
-            backgroundColor: colors.theme.bg
+            backgroundColor: theme.bg
         }}>
-            <Text style={{
-                    color: colors.theme.primary
-                }}>Login</Text>
+            <Text>Login</Text>
+
         </View>
     );
 }

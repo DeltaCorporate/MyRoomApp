@@ -1,7 +1,7 @@
 import React,{useContext} from "react";
 
 import { Text, View } from "react-native";
-import { ThemeContext } from "../context/globalStyles";
+import { ThemeContext } from "../context/Theme";
 
 
 const Home = ()=>{

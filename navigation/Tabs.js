@@ -4,12 +4,11 @@ import { AntDesign } from '@expo/vector-icons';
 import Home from '../screens/Home';
 import Login from '../screens/Login';
 const {Navigator,Screen} = createBottomTabNavigator();
-import { ThemeContext } from '../context/globalStyles';
+import { ThemeContext } from '../context/Theme';
 const Tabs = ()=>{
-    
 const colors = useContext(ThemeContext)
     return(
-        <Navigator initialRouteName='Home' screenOptions={({route})=>({
+        <Navigator initialRouteName='Login' screenOptions={({route})=>({
             tabBarShowLabel:false,
             headerShown: false,
             tabBarStyle:{
