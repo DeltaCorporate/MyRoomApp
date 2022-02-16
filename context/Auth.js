@@ -8,6 +8,7 @@ export const AuthProvider = ({children}) => {
 
 
     const login = ({email,password}) => {
+
         setIsLoggedIn(true);
     };
     const logout = () => {
