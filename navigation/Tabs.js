@@ -1,14 +1,15 @@
 import React, { useContext } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { AntDesign } from '@expo/vector-icons';
+import {AntDesign, Entypo} from '@expo/vector-icons';
 import Home from '../screens/Home';
 import Login from '../screens/Login';
 const {Navigator,Screen} = createBottomTabNavigator();
 import { ThemeContext } from '../context/Theme';
+import Rooms from "../screens/Rooms";
 const Tabs = ()=>{
 const colors = useContext(ThemeContext)
     return(
-        <Navigator initialRouteName='Login' screenOptions={({route})=>({
+        <Navigator initialRouteName='Rooms' screenOptions={({route})=>({
             tabBarShowLabel:false,
             headerShown: false,
             tabBarStyle:{
@@ -23,9 +24,18 @@ const colors = useContext(ThemeContext)
                 backgroundColor:colors.theme.bgContrast
             }
         })} >
+
             <Screen name="Home" component={Home} options={{
                 tabBarIcon:({focused})=>{
                     return <AntDesign name="home" size={24} color={colors.theme.primary} style={{
+                        opacity: focused ? 1 : 0.3
+                    }}/>;
+                }
+            }} />
+
+            <Screen name="Rooms" component={Rooms}  options={{
+                tabBarIcon:({focused})=>{
+                    return <Entypo name="list" size={24} color={colors.theme.primary} style={{
                         opacity: focused ? 1 : 0.3
                     }}/>;
                 }
