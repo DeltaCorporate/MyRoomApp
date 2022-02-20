@@ -24,3 +24,9 @@ export const colors = {
         },
     }
 }
+
+
+export const container = {
+    paddingHorizontal: 20,
+}
+

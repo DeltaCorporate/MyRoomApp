@@ -6,7 +6,7 @@ export const AuthProvider = ({children}) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
 
-    const login = ({email,password}) => {
+    const login = async (email,password) => {
 
         setIsLoggedIn(true);
     };

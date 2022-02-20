@@ -8,11 +8,11 @@ import {Feather} from "@expo/vector-icons";
 
 const Header =()=>{
     const theme = useContext(ThemeContext);
-    let [icon, setIcon] = useState('moon');
+    let [icon, setIcon] = useState('sun');
     let [fontsLoaded] = useFonts({
         Roboto_700Bold
     });
-    if (!fontsLoaded) {
+    if(!fontsLoaded){
         return <AppLoading/>
     }
     return (
