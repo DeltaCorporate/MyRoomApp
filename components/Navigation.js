@@ -1,13 +1,15 @@
 import React from "react";
 import {Text, TouchableOpacity, View} from "react-native";
 import {container} from "../assets/styles/theme";
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
+
 function Navigation({theme,step,prevStep,nextStep,submit}){
+    const bottomTabBarHeight = useBottomTabBarHeight();
     return(
         <View style={{
-            top:80,
             ...container,
-
-            flexDirection: "row",
+            flexDirection: 'row',
+            top: bottomTabBarHeight + 50,
         }}>
             <TouchableOpacity onPress={prevStep} style={{
                 backgroundColor:theme.primary,
