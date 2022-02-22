@@ -11,6 +11,7 @@ import Navigation from "../components/Navigation";
 import {container} from "../assets/styles/theme";
 import EquipementItem from "../components/EquipementItem";
 import {AntDesign} from "@expo/vector-icons";
+import axios from "axios";
 
 
 const Rooms = () => {
@@ -28,11 +29,24 @@ const Rooms = () => {
     const [actualEquipement,setActualEquipement] = useState('');
     const [equipements,setEquipements] = useState([]);
 
+
+    useEffect(()=>{
+        axios.get('http://localhost:8055/items/buildings').then(res=>{
+
+        })
+    },[])
+
     function reserver(){
-        if (!building || !room || !dateStart || !dateEnd || !actualEquipement) {
+        if (!building || !room) {
             Alert.alert("","Veuillez remplir tous les champs");
         } else {
             Alert.alert("","Réservation effectuée");
+            setStep(1);
+            setBuilding('');
+            setRoom('');
+            setDateStart(new Date());
+            setDateEnd(new Date());
+            setEquipements([]);
         }
     }
 
@@ -344,6 +358,36 @@ const Rooms = () => {
                             backgroundColor: theme.bgContrast,
 
                         }}/>
+                        <Picker.Item label={"Equipement E4"} value="E4" style={{
+                            color: theme.primary,
+                            backgroundColor: theme.bgContrast,
+
+                        }}/>
+                        <Picker.Item label={"Equipement E5"} value="E5" style={{
+                            color: theme.primary,
+                            backgroundColor: theme.bgContrast,
+
+                        }}/>
+                        <Picker.Item label={"Equipement E5"} value="E5" style={{
+                            color: theme.primary,
+                            backgroundColor: theme.bgContrast,
+
+                        }}/>
+                        <Picker.Item label={"Equipement E6"} value="E6" style={{
+                            color: theme.primary,
+                            backgroundColor: theme.bgContrast,
+
+                        }}/>
+                        <Picker.Item label={"Equipement E7"} value="E7" style={{
+                            color: theme.primary,
+                            backgroundColor: theme.bgContrast,
+
+                        }}/>
+                        <Picker.Item label={"Equipement E8"} value="E8" style={{
+                            color: theme.primary,
+                            backgroundColor: theme.bgContrast,
+
+                        }}/>
                     </Picker>
                 </View>
                 <ScrollView contentContainerStyle={{
@@ -406,6 +450,54 @@ const Rooms = () => {
                         }}>
                             Salle: {room}
                         </Text>
+                    </View>
+                    <View style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                    }}>
+                        <AntDesign name="arrowright" size={20} color={theme.primary} />
+                        <Text style={{
+                            color:theme.reverse.bg,
+                            marginLeft:5
+                        }}>
+                            Du: {(dateStart.getDate() < 10 ? "0"+dateStart.getDate() : dateStart.getDate())+'/'+ (dateStart.getMonth() < 10 ? "0"+dateStart.getMonth() : dateStart.getMonth())+'/'+dateStart.getFullYear() + " à "+ (dateStart.getHours() < 10 ? "0"+dateStart.getHours() : dateStart.getHours())+":"+(dateStart.getMinutes() < 10 ? "0"+dateStart.getMinutes() : dateStart.getMinutes())}
+                        </Text>
+                    </View>
+                    <View style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                    }}>
+                        <AntDesign name="arrowright" size={20} color={theme.primary} />
+                        <Text style={{
+                            color:theme.reverse.bg,
+                            marginLeft:5
+                        }}>
+                            Au: {(dateEnd.getDate() < 10 ? "0"+dateEnd.getDate() : dateEnd.getDate())+'/'+ (dateEnd.getMonth() < 10 ? "0"+dateEnd.getMonth() : dateEnd.getMonth())+'/'+dateEnd.getFullYear() + " à "+ (dateEnd.getHours() < 10 ? "0"+dateEnd.getHours() : dateEnd.getHours())+":"+(dateEnd.getMinutes() < 10 ? "0"+dateEnd.getMinutes() : dateEnd.getMinutes())}
+                        </Text>
+                    </View>
+                    <View style={{
+                        flexDirection: "row",
+                    }}>
+                        <AntDesign name="arrowright" size={20} color={theme.primary} />
+                        <Text  style={{
+                            color:theme.reverse.bg,
+                            marginLeft:5
+                        }}>Equipements:</Text>
+                        <ScrollView style={{
+                            color:theme.reverse.bg,
+                            marginLeft:5,
+                            maxHeight:200,
+                        }}>
+                            {equipements.map((item,index)=>{
+                                return(
+                                    <Text key={index} style={{
+                                        color:theme.reverse.bg
+                                    }}>
+                                        {item}
+                                    </Text>
+                                )
+                            })}
+                        </ScrollView>
                     </View>
                 </View>
 

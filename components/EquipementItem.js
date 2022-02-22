@@ -16,7 +16,8 @@ function EquipementItem({item,theme,equipement,setEquipement}) {
             flexDirection:'row',
             alignItems:'center',
             backgroundColor:"red",
-            borderRadius:5
+            borderRadius:5,
+            marginBottom:5,
 
         }}>
             <Text style={{
