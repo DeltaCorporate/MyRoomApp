@@ -1,3 +1,4 @@
-var { startServer } = require('directus/server');
+const  {startServer} = require( "directus/server");
 
-startServer();
+
+startServer().then(r => {});

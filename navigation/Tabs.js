@@ -5,7 +5,7 @@ import Home from '../screens/Home';
 import Login from '../screens/Login';
 const {Navigator,Screen} = createBottomTabNavigator();
 import { ThemeContext } from '../context/Theme';
-import Rooms from "../screens/Rooms";
+import Reservation from "../screens/Reservation";
 const Tabs = ()=>{
 const colors = useContext(ThemeContext)
     return(
@@ -33,7 +33,7 @@ const colors = useContext(ThemeContext)
                 }
             }} />
 
-            <Screen name="Rooms" component={Rooms}  options={{
+            <Screen name="Reservation" component={Reservation} options={{
                 tabBarIcon:({focused})=>{
                     return <Entypo name="list" size={24} color={colors.theme.primary} style={{
                         opacity: focused ? 1 : 0.3
