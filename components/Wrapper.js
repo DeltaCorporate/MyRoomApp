@@ -5,21 +5,25 @@ import Tabs from "../navigation/Tabs";
 import {SafeAreaView} from "react-native-safe-area-context";
 import {useContext} from "react";
 import {ThemeContext} from "../context/Theme";
+import {View} from "react-native";
 
 
 export const Wrapper =()=>{
-    const theme = useContext(ThemeContext);
+    const {theme} = useContext(ThemeContext);
     return(
         <SafeAreaView style={{
-            width: "100%",
-            height: "100%",
-            backgroundColor: theme.theme.bg
+            flex:1,
+            backgroundColor: theme.bg
         }}>
-            <StatusBar hidden={true}/>
-            <NavigationContainer>
-                <Header/>
-                <Tabs/>
-            </NavigationContainer>
+            <View style={{
+                flex:1
+            }}>
+
+                <NavigationContainer>
+                    <Header/>
+                    <Tabs/>
+                </NavigationContainer>
+            </View>
         </SafeAreaView>
     )
 }

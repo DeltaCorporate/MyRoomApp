@@ -4,6 +4,7 @@ export const colors = {
         "bgContrast":"#0A112C",
         "primary": "#00ECC2",
         "primary_50":"rgba(0,236,194,0.8)",
+        "disabled":"#7F8FA4",
         "reverse":{
             "bg":"#E8E8E8",
             "bgContrast":"#E1E4EC",

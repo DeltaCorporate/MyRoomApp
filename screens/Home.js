@@ -1,21 +1,22 @@
-import React,{useContext} from "react";
+import React, {useContext, useEffect} from "react";
 
-import { Text, View } from "react-native";
-import { ThemeContext } from "../context/Theme";
+import {Text, View} from "react-native";
+import {ThemeContext} from "../context/Theme";
 
 
-const Home = ()=>{
+const Home = () => {
     const colors = useContext(ThemeContext)
- return(
-     <View style={{
-         flex:1,
-        backgroundColor: colors.theme.bg
-     }}>
-         <Text style={{
-             color: colors.theme.primary
-         }}>Home</Text>
-     </View>
- );
+    return (
+
+        <View style={{
+            flex: 1,
+            backgroundColor: colors.theme.bg
+        }}>
+            <Text style={{
+                color: colors.theme.primary
+            }}>Home</Text>
+        </View>
+    )
 }
 
 

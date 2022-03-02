@@ -29,14 +29,14 @@ function Navigation({theme,step,prevStep,nextStep,submit}){
                 </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={nextStep} style={{
-                backgroundColor:theme.primary,
+            <TouchableOpacity onPress={nextStep}  style={{
+                backgroundColor: theme.primary,
                 paddingHorizontal: 5,
                 paddingVertical:8,
                 borderRadius:4,
                 flex: step < 5 ? 1 : 0.5,
                 display: step < 5 ? "flex" : 'none'
-            }}>
+            }}  >
                 <Text style={{
                     color: theme.bg,
 
@@ -45,7 +45,7 @@ function Navigation({theme,step,prevStep,nextStep,submit}){
                     Suivant
                 </Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={submit} style={{
+            <TouchableOpacity  onPress={submit} style={{
                 backgroundColor:theme.primary,
                 paddingHorizontal: 5,
                 paddingVertical:8,

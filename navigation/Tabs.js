@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, {useContext, useEffect} from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {AntDesign, Entypo} from '@expo/vector-icons';
 import Home from '../screens/Home';
@@ -7,9 +7,9 @@ const {Navigator,Screen} = createBottomTabNavigator();
 import { ThemeContext } from '../context/Theme';
 import Reservation from "../screens/Reservation";
 const Tabs = ()=>{
-const colors = useContext(ThemeContext)
+    const colors = useContext(ThemeContext)
     return(
-        <Navigator initialRouteName='Rooms' screenOptions={({route})=>({
+        <Navigator initialRouteName='Reservation' screenOptions={({route})=>({
             tabBarShowLabel:false,
             headerShown: false,
             tabBarStyle:{
