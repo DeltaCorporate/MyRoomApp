@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {Alert, Text, View} from 'react-native';
+import {Alert, ScrollView, Text, View} from 'react-native';
 import {ThemeContext} from "../context/Theme";
 import {container} from "../assets/styles/theme";
 import axios from "axios";
@@ -18,6 +18,7 @@ const Reservation = () => {
     const [category, setCategory] = useState(-1);
     const [rooms, setRooms] = useState([]);
     const [room, setRoom] = useState(0);
+    const [configuration,setConfiguration] = useState([]);
 
 
     const [step, setStep] = useState(1);
@@ -44,17 +45,31 @@ const Reservation = () => {
             setRooms([]);
             return;
         }
+        setStep(step+1);
         setLoaded(false);
         setTimeout(()=>{
             fetchRoom(category)
             setLoaded(true);
         },3e3)
     }
+    function chooseRoom(room) {
+      setRoom(room);
+      if(room === -1){
+          setConfiguration([]);
+          return;
+      }
+      setStep(step+1);
+      setLoaded(false);
+      setTimeout(() => {
+          fetchConfiguration(room);
+          setLoaded(true)
+      }, 3e3);
+    }
 
     function fetchCategories() {
         let configCategory = {
             method: 'get',
-            url: 'http://192.168.1.62:8055/items/category',
+            url: 'http://192.168.43.253:8055/items/category',
             headers: {}
         };
 
@@ -67,10 +82,23 @@ const Reservation = () => {
             });
     }
 
+    function fetchConfiguration(room){
+      let configurationConfig = {
+        method: "get",
+        url: `http://192.168.43.253:8055/items/configuration?filter[room]=${room}`,
+        headers: {},
+      };
+      axios(configurationConfig).then((response)=>{
+          setConfiguration(response.data.data);
+      }).catch((err)=>{
+          console.log(err);
+      })
+    }
+
     function fetchRoom(category){
         let config = {
             method: "get",
-            url:`http://192.168.1.62:8055/items/room?filter[building]=${building}&filter[category]=${category}`,
+            url:`http://192.168.43.253:8055/items/room?filter[building]=${building}&filter[category]=${category}`,
             headers:{}
         }
         axios(config).then((response)=>{
@@ -92,7 +120,7 @@ const Reservation = () => {
     function fetchBuildings() {
         let configBuildings = {
             method: 'get',
-            url: 'http://192.168.1.62:8055/items/building',
+            url: 'http://192.168.43.253:8055/items/building',
             headers: {}
         };
 
@@ -114,149 +142,252 @@ const Reservation = () => {
         }, 3e3);
     }, [])
 
-    function chooseRoom(room) {
-        setRoom(room)
-    }
+
 
     if (loaded)
-        return (<View style={{
-            flex: 1,
-            backgroundColor: theme.bg
-        }}>
+        return (
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: theme.bg,
+            }}
+          >
             {/*STEPS*/}
-            <View style={{
-                flexDirection: 'row',
-                alignItems: 'center',
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
                 ...container,
                 top: 40,
-            }}>
-                <Step theme={theme} step={step} value={1}/>
-                <SeparatorStep theme={theme} step={step} value={1}/>
-                <Step theme={theme} step={step} value={2}/>
-                <SeparatorStep theme={theme} step={step} value={2}/>
-                <Step theme={theme} step={step} value={3}/>
-                <SeparatorStep theme={theme} step={step} value={3}/>
-                <Step theme={theme} step={step} value={4}/>
-                <SeparatorStep theme={theme} step={step} value={4}/>
-                <Step theme={theme} step={step} value={5}/>
+              }}
+            >
+              <Step theme={theme} step={step} value={1} />
+              <SeparatorStep theme={theme} step={step} value={1} />
+              <Step theme={theme} step={step} value={2} />
+              <SeparatorStep theme={theme} step={step} value={2} />
+              <Step theme={theme} step={step} value={3} />
+              <SeparatorStep theme={theme} step={step} value={3} />
+              <Step theme={theme} step={step} value={4} />
+              <SeparatorStep theme={theme} step={step} value={4} />
+              <Step theme={theme} step={step} value={5} />
             </View>
 
             {/*STEP 1: BUILDING*/}
-            <View style={{
+            <View
+              style={{
                 top: 50,
                 display: step === 1 ? "flex" : "none",
-                paddingVertical: 50
-            }}>
-                <Text style={{
-                    color: theme.primary,
-                    bottom: 20,
-                    ...container
-                }}>
-                    Choisissez le bâtiment:
-                </Text>
-                <View style={{
-                    paddingHorizontal: 15,
-                }}>
-                    <Picker selectedValue={building} onValueChange={chooseBuilding} mode="dropdown" style={{
-                        backgroundColor: theme.bgContrast
-                    }} dropdownIconColor={theme.primary}>
-                        <Picker.Item key={-1} label={""} value={-1} style={{
-                            color: theme.primary,
-                            backgroundColor: theme.bgContrast,
-
-                        }}/>
-                        {buildings.map((building, index) => {
-
-                            return (
-                                <Picker.Item key={index} label={building.name} value={building.id} style={{
-                                    color: theme.primary,
-                                    backgroundColor: theme.bgContrast,
-
-                                }}/>
-                            )
-                        })}
-                    </Picker>
-                </View>
-
+                paddingVertical: 50,
+              }}
+            >
+              <Text
+                style={{
+                  color: theme.primary,
+                  bottom: 20,
+                  ...container,
+                }}
+              >
+                Choisissez le bâtiment:
+              </Text>
+              <View
+                style={{
+                  paddingHorizontal: 15,
+                }}
+              >
+                <Picker
+                  selectedValue={building}
+                  onValueChange={chooseBuilding}
+                  mode="dropdown"
+                  style={{
+                    backgroundColor: theme.bgContrast,
+                  }}
+                  dropdownIconColor={theme.primary}
+                >
+                  <Picker.Item
+                    key={-1}
+                    label={""}
+                    value={-1}
+                    style={{
+                      color: theme.primary,
+                      backgroundColor: theme.bgContrast,
+                    }}
+                  />
+                  {buildings.map((building, index) => {
+                    return (
+                      <Picker.Item
+                        key={index}
+                        label={building.name}
+                        value={building.id}
+                        style={{
+                          color: theme.primary,
+                          backgroundColor: theme.bgContrast,
+                        }}
+                      />
+                    );
+                  })}
+                </Picker>
+              </View>
             </View>
             {/*STEP 2: Category*/}
-            <View style={{
+            <View
+              style={{
                 top: 50,
                 display: step === 2 ? "flex" : "none",
-                paddingVertical: 50
-            }}>
-                <Text style={{
-                    color: theme.primary,
-                    bottom: 20,
-                    ...container
-                }}>
-                    Choisissez la catégorie de salle:
-                </Text>
-                <View style={{
-                    paddingHorizontal: 15,
-                }}>
-                    <Picker selectedValue={category} onValueChange={chooseCategory} mode="dropdown" style={{
-                        backgroundColor: theme.bgContrast
-                    }} dropdownIconColor={theme.primary}>
-                        <Picker.Item key={-1} label={""} value={-1} style={{
-                            color: theme.primary,
-                            backgroundColor: theme.bgContrast,
-
-                        }}/>
-                        {categories.map((category, index) => {
-                            return (
-                                <Picker.Item key={index} label={category.name} value={category.id} style={{
-                                    color: theme.primary,
-                                    backgroundColor: theme.bgContrast,
-
-                                }}/>
-                            )
-                        })}
-                    </Picker>
-                </View>
-
+                paddingVertical: 50,
+              }}
+            >
+              <Text
+                style={{
+                  color: theme.primary,
+                  bottom: 20,
+                  ...container,
+                }}
+              >
+                Choisissez la catégorie de salle:
+              </Text>
+              <View
+                style={{
+                  paddingHorizontal: 15,
+                }}
+              >
+                <Picker
+                  selectedValue={category}
+                  onValueChange={chooseCategory}
+                  mode="dropdown"
+                  style={{
+                    backgroundColor: theme.bgContrast,
+                  }}
+                  dropdownIconColor={theme.primary}
+                >
+                  <Picker.Item
+                    key={-1}
+                    label={""}
+                    value={-1}
+                    style={{
+                      color: theme.primary,
+                      backgroundColor: theme.bgContrast,
+                    }}
+                  />
+                  {categories.map((category, index) => {
+                    return (
+                      <Picker.Item
+                        key={index}
+                        label={category.name}
+                        value={category.id}
+                        style={{
+                          color: theme.primary,
+                          backgroundColor: theme.bgContrast,
+                        }}
+                      />
+                    );
+                  })}
+                </Picker>
+              </View>
             </View>
-            {/*STEP 2: Rooms*/}
-            <View style={{
+            {/*STEP 3: Rooms*/}
+            <View
+              style={{
                 top: 50,
                 display: step === 3 ? "flex" : "none",
-                paddingVertical: 50
-            }}>
-                <Text style={{
-                    color: theme.primary,
-                    bottom: 20,
-                    ...container
+                paddingVertical: 50,
+              }}
+            >
+              <Text
+                style={{
+                  color: theme.primary,
+                  bottom: 20,
+                  ...container,
+                }}
+              >
+                Choisissez la salle:
+              </Text>
+              <View
+                style={{
+                  paddingHorizontal: 15,
+                }}
+              >
+                <Picker
+                  selectedValue={room}
+                  onValueChange={chooseRoom}
+                  mode="dropdown"
+                  style={{
+                    backgroundColor: theme.bgContrast,
+                  }}
+                  dropdownIconColor={theme.primary}
+                >
+                  <Picker.Item
+                    key={-1}
+                    label={""}
+                    value={-1}
+                    style={{
+                      color: theme.primary,
+                      backgroundColor: theme.bgContrast,
+                    }}
+                  />
+                  {rooms.map((room, index) => {
+                    return (
+                      <Picker.Item
+                        key={index}
+                        label={room.name}
+                        value={room.id}
+                        style={{
+                          color: theme.primary,
+                          backgroundColor: theme.bgContrast,
+                        }}
+                      />
+                    );
+                  })}
+                </Picker>
+              </View>
+            </View>
+            {/* Details of equipement of the room */}
+            <View
+              style={{
+                top: 50,
+                display: step === 4 ? "flex" : "none",
+                paddingVertical: 50,
+              }}
+            >
+              <Text
+                style={{
+                  color: theme.primary,
+                  bottom: 20,
+                  ...container,
+                }}
+              >
+                Equipement de cette salle:
+              </Text>
+              <View
+                style={{
+                  paddingHorizontal: 15,
+                }}
+              >
+                <ScrollView style={{
+                    height:300
                 }}>
-                    Choisissez la catégorie de salle:
-                </Text>
-                <View style={{
-                    paddingHorizontal: 15,
-                }}>
-                    <Picker selectedValue={room} onValueChange={chooseRoom} mode="dropdown" style={{
-                        backgroundColor: theme.bgContrast
-                    }} dropdownIconColor={theme.primary}>
-                        <Picker.Item key={-1} label={""} value={-1} style={{
-                            color: theme.primary,
-                            backgroundColor: theme.bgContrast,
-
-                        }}/>
-                        {rooms.map((room, index) => {
-                            return (
-                                <Picker.Item key={index} label={room.name} value={room.id} style={{
-                                    color: theme.primary,
-                                    backgroundColor: theme.bgContrast,
-
-                                }}/>
-                            )
-                        })}
-                    </Picker>
-                </View>
-
+                    {configuration.map((conf,index)=>{
+                        return (
+                          <View 
+                          key={index}
+                          >
+                            <Text style={{
+                                color: theme.primary
+                            }}>{conf.room}</Text>
+                          </View>
+                        );
+                    })}
+                </ScrollView>
+              </View>
             </View>
 
-
-            <Navigation theme={theme} step={step} prevStep={prevStep} nextStep={nextStep}/>
-        </View>)
+            <Navigation
+              theme={theme}
+              step={step}
+              prevStep={prevStep}
+              nextStep={nextStep}
+            />
+          </View>
+        );
     return <Loading/>
 };
 
