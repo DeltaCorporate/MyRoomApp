@@ -3,6 +3,7 @@ import {ThemeProvider} from "./context/Theme";
 import {Wrapper} from "./components/Wrapper";
 import {StatusBar} from "expo-status-bar";
 import {SafeAreaView} from "react-native";
+import {GlobalProvider} from "./context/Globals";
 
 export default function App() {
 
@@ -13,9 +14,10 @@ export default function App() {
             flex:1,
         }}>
             <ThemeProvider>
-                <StatusBar/>
-
-                <Wrapper/>
+                <GlobalProvider>
+                    <StatusBar/>
+                    <Wrapper/>
+                </GlobalProvider>
             </ThemeProvider>
         </SafeAreaView>
     );
