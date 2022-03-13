@@ -1,109 +1,31 @@
-import React, {useContext, useEffect, useState} from "react";
-import {Alert, FlatList, Platform, SafeAreaView, ScrollView, Text, View} from "react-native";
+import React, {useContext, useEffect, useState} from 'react';
+import {Alert, ScrollView, Text, View} from 'react-native';
 import {ThemeContext} from "../context/Theme";
-import {Picker} from "@react-native-picker/picker";
-import DateTimePicker from '@react-native-community/datetimepicker';
-import Button from "../components/Button";
-import SeparatorStep from "../components/SeparatorStep";
-import Step from "../components/Step";
-import Navigation from "../components/Navigation";
-
 import {container} from "../assets/styles/theme";
-import EquipementItem from "../components/EquipementItem";
-import {AntDesign} from "@expo/vector-icons";
 import axios from "axios";
+import Step from "../components/Step";
+import SeparatorStep from "../components/SeparatorStep";
+import Navigation from "../components/Navigation";
+import {Picker} from "@react-native-picker/picker";
+import Loading from "./Loading";
+import {GlobalsContext} from "../context/Globals";
+import {Col, Row, Rows, Table, TableWrapper} from "react-native-table-component";
 
-
-const Rooms = () => {
-    const [buildings, SetBuildings] = useState([]);
+const Reservation = () => {
+    const {theme} = useContext(ThemeContext);
+    const {globals} = useContext(GlobalsContext)
+    const [buildings, setBuildings] = useState(null);
+    const [building, setBuilding] = useState(-1);
+    const [loaded, setLoaded] = useState(false);
+    const [categories, setCategories] = useState(null);
+    const [category, setCategory] = useState(-1);
     const [rooms, setRooms] = useState([]);
+    const [room, setRoom] = useState(0);
+    const [configuration, setConfiguration] = useState([]);
+    const [equipement, setEquipement] = useState([]);
+
+
     const [step, setStep] = useState(1);
-    const [building, setBuilding] = useState("");
-    const [room, setRoom] = useState('');
-    const [dateStart, setDateStart] = useState(new Date());
-    const [modeStart, setModeStart] = useState('date');
-    const [showStart, setShowStart] = useState(false);
-    const [dateEnd, setDateEnd] = useState(new Date());
-    const [modeEnd, setModeEnd] = useState('date');
-    const [showEnd, setShowEnd] = useState(false);
-    const [actualEquipement,setActualEquipement] = useState('');
-    const [equipements,setEquipements] = useState([]);
-
-
-    useEffect(()=>{
-        axios.get('http://localhost:8055/items/buildings').then(res=>{
-
-        })
-    },[])
-
-    function reserver(){
-        if (!building || !room) {
-            Alert.alert("","Veuillez remplir tous les champs");
-        } else {
-            Alert.alert("","Réservation effectuée");
-            setStep(1);
-            setBuilding('');
-            setRoom('');
-            setDateStart(new Date());
-            setDateEnd(new Date());
-            setEquipements([]);
-        }
-    }
-
-
-    function onChooseEquipement(equipement){
-        setActualEquipement(equipement);
-        if(equipements.includes(equipement)) return
-        addEquipement(equipement);
-    }
-    function addEquipement(equipement){
-        let equipementList = equipements;
-        equipementList.push(equipement);
-        setEquipements(equipementList);
-    }
-
-    const onChangeStart = (event, selectedDate) => {
-        const currentDate = selectedDate || dateStart;
-        setShowStart(Platform.OS === 'ios');
-        setDateStart(currentDate);
-    };
-
-    const showModeStart = (currentMode) => {
-        setShowStart(true);
-        setModeStart(currentMode);
-    };
-
-    const showDatepickerStart = () => {
-        showModeStart('date');
-    };
-
-    const showTimepickerStart = () => {
-        showModeStart('time');
-    };
-    const onChangeEnd = (event, selectedDate) => {
-        const currentDate = selectedDate || dateEnd;
-        setShowEnd(Platform.OS === 'ios');
-        setDateEnd(currentDate);
-    };
-
-    const showModeEnd = (currentMode) => {
-        setShowEnd(true);
-        setModeEnd(currentMode);
-    };
-
-    const showDatepickerEnd = () => {
-        showModeEnd('date');
-    };
-
-    const showTimepickerEnd = () => {
-        showModeEnd('time');
-    };
-
-
-    function chooseBuilding(building) {
-        setBuilding(building);
-    }
-
 
     function nextStep() {
         if (step === 5) return;
@@ -116,398 +38,423 @@ const Rooms = () => {
     }
 
 
-
-    const {theme} = useContext(ThemeContext);
-
-    function chooseRoom(room) {
-        setRoom(room)
+    function chooseBuilding(building) {
+        setBuilding(building)
     }
 
-    return (
-        <View style={{
-            backgroundColor: theme.bg,
-            flex: 1,
+    function chooseCategory(category) {
+        setCategory(category);
 
-        }}>
-            {/*STEPS*/}
-            <View style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                ...container,
-                top: 40,
-            }}>
+        if (category === -1) {
+            setRooms([]);
+            return;
+        }
+        setStep(step + 1);
+        setLoaded(false);
+        setTimeout(() => {
+            fetchRoom(category)
+            setLoaded(true);
+        }, 3e3)
+    }
 
-                <Step theme={theme} step={step} value={1}/>
-                <SeparatorStep theme={theme} step={step} value={1}/>
-                <Step theme={theme} step={step} value={2}/>
-                <SeparatorStep theme={theme} step={step} value={2}/>
-                <Step theme={theme} step={step} value={3}/>
-                <SeparatorStep theme={theme} step={step} value={3}/>
-                <Step theme={theme} step={step} value={4}/>
-                <SeparatorStep theme={theme} step={step} value={4}/>
-                <Step theme={theme} step={step} value={5}/>
+    function chooseRoom(room) {
+        setRoom(room);
+        if (room === -1) {
+            setConfiguration([]);
+            return;
+        }
+        setStep(step + 1);
+        setLoaded(false);
+        setTimeout(() => {
+            fetchConfiguration(room);
+            setLoaded(true)
+        }, 3e3);
+    }
 
-            </View>
+    function fetchCategories() {
+        let configCategory = {
+            method: 'get',
+            url: `${globals.api_url}/items/category`,
+            headers: {}
+        };
+
+        axios(configCategory)
+            .then((response) => {
+                setCategories(response.data.data)
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
+
+    function fetchConfiguration(room) {
+        let configurationConfig = {
+            method: "get",
+            url: `${globals.api_url}/items/configuration?filter[room]=${room}`,
+            headers: {},
+        };
+        axios(configurationConfig).then((response) => {
+            setConfiguration(response.data.data);
+            fetchEquipement(response.data.data)
+        }).catch((err) => {
+            console.log(err);
+        })
+    }
+
+    function fetchRoom(category) {
+        let config = {
+            method: "get",
+            url: `${globals.api_url}/items/room?filter[building]=${building}&filter[category]=${category}`,
+            headers: {}
+        }
+        axios(config).then((response) => {
+            let data = response.data.data;
+            if (data.length <= 0) {
+                Alert.alert('', "Aucune salle de dispo dans ce batiment", [
+
+                    {
+                        text: 'Changer de batiment', onPress: () => {
+                            setStep(1)
+                        }
+                    },
+                    {
+                        text: 'Changer de catégorie', onPress: () => {
+                            setCategory(-1);
+                            setRooms([])
+                        }
+                    },
+                ], {cancelable: false});
+            } else {
+                setRooms(data)
+            }
+        }).catch((err) => {
+            console.log(err)
+        })
+    }
+
+    function fetchBuildings() {
+        let configBuildings = {
+            method: 'get',
+            url: `${globals.api_url}/items/building`,
+            headers: {}
+        };
+
+        axios(configBuildings)
+            .then((response) => {
+                setBuildings(response.data.data)
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+    }
 
 
-            {/*STEP 1*/}
-            <View style={{
-                top: 50,
-                display: step === 1 ? "flex" : "none",
-                paddingVertical: 50
-            }}>
-                <Text style={{
-                    color: theme.primary,
-                    bottom: 20,
-                    ...container
-                }}>
-                    Choisissez le bâtiment:
-                </Text>
-                <View style={{
-                    paddingHorizontal: 15,
-                }}>
-                    <Picker selectedValue={building} onValueChange={chooseBuilding} mode="dropdown" style={{
-                        backgroundColor: theme.bgContrast
-                    }} dropdownIconColor={theme.primary}>
-                        <Picker.Item label={"Batiment A"} value="A" style={{
+    function fetchEquipement(configuration) {
+        configuration.forEach((config) => {
+            let conf = {
+                method: "get",
+                url: `${globals.api_url}/items/equipement/${config.id}`,
+                headers: {}
+            }
+            axios(conf).then((res) => {
+                let equip = res.data.data;
+                equip.total = config.total;
+                let equipementList = [...equipement, equip];
+                let finalEquipement = equipement;
+                equipementList.forEach((e) => {
+                    if (!e.name || !e.total) return
+                    finalEquipement.push([e.name, e.total])
+                })
+                console.log(finalEquipement)
+                setEquipement(finalEquipement);
+            }).catch((err) => {
+                console.log(err)
+            })
+        })
+
+    }
+
+    useEffect(() => {
+        fetchBuildings();
+        fetchCategories();
+
+        setTimeout(() => {
+            setLoaded(true)
+        }, 3e3);
+    }, [])
+
+
+    if (loaded)
+        return (
+            <View
+                style={{
+                    flex: 1,
+                    backgroundColor: theme.bg,
+                }}
+            >
+                {/*STEPS*/}
+
+
+                {/*STEP 1: BUILDING*/}
+                <View
+                    style={{
+                        top: 50,
+                        display: step === 1 ? "flex" : "none",
+                        paddingVertical: 50,
+                    }}
+                >
+                    <Text
+                        style={{
                             color: theme.primary,
-                            backgroundColor: theme.bgContrast,
-
-                        }}/>
-                        <Picker.Item label={"Batiment B"} value="B" style={{
-                            color: theme.primary,
-                            backgroundColor: theme.bgContrast,
-
-                        }}/>
-                        <Picker.Item label={"Batiment C"} value="C" style={{
-                            color: theme.primary,
-                            backgroundColor: theme.bgContrast,
-
-                        }}/>
-                    </Picker>
-                </View>
-
-            </View>
-
-            {/*STEP 2*/}
-            <View style={{
-                top: 50,
-                display: step === 2 ? "flex" : "none",
-                paddingVertical: 50
-            }}>
-                <Text style={{
-                    color: theme.primary,
-                    bottom: 20,
-                    ...container
-                }}>
-                    Choisissez la salle:
-                </Text>
-                <View style={{
-                    paddingHorizontal: 15,
-                }}>
-                    <Picker selectedValue={room} onValueChange={chooseRoom} mode="dropdown" style={{
-                        backgroundColor: theme.bgContrast
-                    }} dropdownIconColor={theme.primary}>
-                        <Picker.Item label={"Salle D1"} value="D1" style={{
-                            color: theme.primary,
-                            backgroundColor: theme.bgContrast,
-
-                        }}/>
-                        <Picker.Item label={"Salle D3"} value="D2" style={{
-                            color: theme.primary,
-                            backgroundColor: theme.bgContrast,
-
-                        }}/>
-                        <Picker.Item label={"Salle D2"} value="D3" style={{
-                            color: theme.primary,
-                            backgroundColor: theme.bgContrast,
-
-                        }}/>
-                    </Picker>
-                </View>
-
-            </View>
-            {/*STEP 3*/}
-            <View style={{
-                top: 50,
-                display: step === 3 ? "flex" : "none",
-                paddingVertical: 50
-            }}>
-                <Text style={{
-                    color: theme.primary,
-                    bottom: 20,
-                    ...container
-                }}>
-                    Vous souhaitez réserver du:
-                </Text>
-                <View style={{
-                    paddingHorizontal: 15,
-                }}>
-                    <View style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between"
-                    }}>
-                        <Button theme={theme} onPress={showDatepickerStart} touchableStyle={{ flex: 1,marginRight: 10 }}>Date de début</Button>
-                        <Button theme={theme} onPress={showTimepickerStart} touchableStyle={{
-                            flex: 1
-                        }}>Heure de début</Button>
-                    </View>
-                    <View style={{
-                        top:20,
-                        paddingVertical:10,
-                        backgroundColor: theme.bgContrast
-                    }}>
-                        <Text style={{
-                            color: theme.reverse.bg
-                        }}>
-                            {(dateStart.getDate() < 10 ? "0"+dateStart.getDate() : dateStart.getDate())+'/'+ (dateStart.getMonth() < 10 ? "0"+dateStart.getMonth() : dateStart.getMonth())+'/'+dateStart.getFullYear() + " à "+ (dateStart.getHours() < 10 ? "0"+dateStart.getHours() : dateStart.getHours())+":"+(dateStart.getMinutes() < 10 ? "0"+dateStart.getMinutes() : dateStart.getMinutes())}
-                        </Text>
-                    </View>
-                    {showStart && (
-                        <DateTimePicker
-                            value={dateStart}
-                            mode={modeStart}
-                            is24Hour={true}
-                            minimumDate={new Date()}
-                            display="default"
-                            onChange={onChangeStart}
-                        />
-                    )}
-                </View>
-                <View style={{
-                    top:80
-                }}>
-                    <Text style={{
-                        color: theme.primary,
-                        bottom: 20,
-                        ...container
-                    }}>
-                        Au:
+                            bottom: 20,
+                            ...container,
+                        }}
+                    >
+                        Choisissez le bâtiment:
                     </Text>
-                    <View style={{
-                        paddingHorizontal: 15,
-                    }}>
-                        <View style={{
-                            flexDirection: "row",
-                            justifyContent: "space-between"
-                        }}>
-                            <Button theme={theme} onPress={showDatepickerEnd} touchableStyle={{ flex: 1,marginRight: 10 }}>Date de fin</Button>
-                            <Button theme={theme} onPress={showTimepickerEnd} touchableStyle={{
-                                flex: 1
-                            }}>Heure de fin</Button>
-                        </View>
-                        <View style={{
-                            top:20,
-                            paddingVertical:10,
-                            backgroundColor: theme.bgContrast
-                        }}>
-                            <Text style={{
-                                color: theme.reverse.bg
-                            }}>
-                                {(dateEnd.getDate() < 10 ? "0"+dateEnd.getDate() : dateEnd.getDate())+'/'+ (dateEnd.getMonth() < 10 ? "0"+dateEnd.getMonth() : dateEnd.getMonth())+'/'+dateEnd.getFullYear() + " à "+ (dateEnd.getHours() > 10 ? dateEnd.getHours(): '0'+dateEnd.getHours())+":"+(dateEnd.getMinutes()> 10 ? dateEnd.getMinutes(): '0'+dateEnd.getMinutes())}
-                            </Text>
-                        </View>
-                        {showEnd && (
-                            <DateTimePicker
-                                value={dateEnd}
-                                mode={modeEnd}
-                                is24Hour={true}
-                                minimumDate={dateStart}
-                                display="default"
-                                onChange={onChangeEnd}
+                    <View
+                        style={{
+                            paddingHorizontal: 15,
+                        }}
+                    >
+                        <Picker
+                            selectedValue={building}
+                            onValueChange={chooseBuilding}
+                            mode="dropdown"
+                            style={{
+                                backgroundColor: theme.bgContrast,
+                            }}
+                            dropdownIconColor={theme.primary}
+                        >
+                            <Picker.Item
+                                key={-1}
+                                label={""}
+                                value={-1}
+                                style={{
+                                    color: theme.primary,
+                                    backgroundColor: theme.bgContrast,
+                                }}
                             />
-                        )}
-                    </View>
-                </View>
-
-            </View>
-
-            {/*Step 4 */}
-
-
-            <View style={{
-                top: 50,
-                display: step === 4 ? "flex" : "none",
-                paddingVertical: 50
-            }}>
-                <Text style={{
-                    color: theme.primary,
-                    bottom: 20,
-                    ...container
-                }}>
-                    Choisissez votre équipement:
-                </Text>
-                <View style={{
-                    paddingHorizontal: 15,
-                }}>
-                    <Picker selectedValue={actualEquipement}  onValueChange={onChooseEquipement} mode="dropdown" style={{
-                        backgroundColor: theme.bgContrast
-                    }} dropdownIconColor={theme.primary}>
-                        <Picker.Item label={"Equipement E1"} value="E1" style={{
-                            color: theme.primary,
-                            backgroundColor: theme.bgContrast,
-
-                        }}/>
-                        <Picker.Item label={"Equipement E2"} value="E2" style={{
-                            color: theme.primary,
-                            backgroundColor: theme.bgContrast,
-
-                        }}/>
-                        <Picker.Item label={"Equipement E3"} value="E3" style={{
-                            color: theme.primary,
-                            backgroundColor: theme.bgContrast,
-
-                        }}/>
-                        <Picker.Item label={"Equipement E4"} value="E4" style={{
-                            color: theme.primary,
-                            backgroundColor: theme.bgContrast,
-
-                        }}/>
-                        <Picker.Item label={"Equipement E5"} value="E5" style={{
-                            color: theme.primary,
-                            backgroundColor: theme.bgContrast,
-
-                        }}/>
-                        <Picker.Item label={"Equipement E5"} value="E5" style={{
-                            color: theme.primary,
-                            backgroundColor: theme.bgContrast,
-
-                        }}/>
-                        <Picker.Item label={"Equipement E6"} value="E6" style={{
-                            color: theme.primary,
-                            backgroundColor: theme.bgContrast,
-
-                        }}/>
-                        <Picker.Item label={"Equipement E7"} value="E7" style={{
-                            color: theme.primary,
-                            backgroundColor: theme.bgContrast,
-
-                        }}/>
-                        <Picker.Item label={"Equipement E8"} value="E8" style={{
-                            color: theme.primary,
-                            backgroundColor: theme.bgContrast,
-
-                        }}/>
-                    </Picker>
-                </View>
-                <ScrollView contentContainerStyle={{
-                    flexDirection: "row",
-                    flexWrap: "wrap",
-                    justifyContent: "space-between",
-                    paddingVertical: 10
-                }} style={{
-                    maxHeight: 270,
-                    ...container
-                }}>
-                    {equipements.map((item,index)=>{
-                        return(
-                            <EquipementItem key={index} item={item} theme={theme} equipement={equipements} setEquipement={setEquipements}/>
-                        )
-                    })}
-                </ScrollView>
-
-            </View>
-
-            {/*Step 5 */}
-            <View style={{
-                top: 50,
-                display: step === 5 ? "flex" : "none",
-                paddingVertical: 50
-            }}>
-                <Text style={{
-                    color: theme.primary,
-                    bottom: 20,
-                    ...container
-                }}>
-                    Confirmez votre réservation:
-                </Text>
-
-                <View style={{
-                    ...container,
-                    backgroundColor: theme.bgContrast,
-
-                }}>
-                    <View style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                    }}>
-                        <AntDesign name="arrowright" size={20} color={theme.primary} />
-                        <Text style={{
-                            color:theme.reverse.bg,
-                            marginLeft:5
-                        }}>
-                            Batiment: {building}
-                        </Text>
-                    </View>
-                    <View style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                    }}>
-                        <AntDesign name="arrowright" size={20} color={theme.primary} />
-                        <Text style={{
-                            color:theme.reverse.bg,
-                            marginLeft:5
-                        }}>
-                            Salle: {room}
-                        </Text>
-                    </View>
-                    <View style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                    }}>
-                        <AntDesign name="arrowright" size={20} color={theme.primary} />
-                        <Text style={{
-                            color:theme.reverse.bg,
-                            marginLeft:5
-                        }}>
-                            Du: {(dateStart.getDate() < 10 ? "0"+dateStart.getDate() : dateStart.getDate())+'/'+ (dateStart.getMonth() < 10 ? "0"+dateStart.getMonth() : dateStart.getMonth())+'/'+dateStart.getFullYear() + " à "+ (dateStart.getHours() < 10 ? "0"+dateStart.getHours() : dateStart.getHours())+":"+(dateStart.getMinutes() < 10 ? "0"+dateStart.getMinutes() : dateStart.getMinutes())}
-                        </Text>
-                    </View>
-                    <View style={{
-                        flexDirection: "row",
-                        alignItems: "center",
-                    }}>
-                        <AntDesign name="arrowright" size={20} color={theme.primary} />
-                        <Text style={{
-                            color:theme.reverse.bg,
-                            marginLeft:5
-                        }}>
-                            Au: {(dateEnd.getDate() < 10 ? "0"+dateEnd.getDate() : dateEnd.getDate())+'/'+ (dateEnd.getMonth() < 10 ? "0"+dateEnd.getMonth() : dateEnd.getMonth())+'/'+dateEnd.getFullYear() + " à "+ (dateEnd.getHours() < 10 ? "0"+dateEnd.getHours() : dateEnd.getHours())+":"+(dateEnd.getMinutes() < 10 ? "0"+dateEnd.getMinutes() : dateEnd.getMinutes())}
-                        </Text>
-                    </View>
-                    <View style={{
-                        flexDirection: "row",
-                    }}>
-                        <AntDesign name="arrowright" size={20} color={theme.primary} />
-                        <Text  style={{
-                            color:theme.reverse.bg,
-                            marginLeft:5
-                        }}>Equipements:</Text>
-                        <ScrollView style={{
-                            color:theme.reverse.bg,
-                            marginLeft:5,
-                            maxHeight:200,
-                        }}>
-                            {equipements.map((item,index)=>{
-                                return(
-                                    <Text key={index} style={{
-                                        color:theme.reverse.bg
-                                    }}>
-                                        {item}
-                                    </Text>
-                                )
+                            {buildings.map((building, index) => {
+                                return (
+                                    <Picker.Item
+                                        key={index}
+                                        label={building.name}
+                                        value={building.id}
+                                        style={{
+                                            color: theme.primary,
+                                            backgroundColor: theme.bgContrast,
+                                        }}
+                                    />
+                                );
                             })}
+                        </Picker>
+                    </View>
+                </View>
+                {/*STEP 2: Category*/}
+                <View
+                    style={{
+                        top: 50,
+                        display: step === 2 ? "flex" : "none",
+                        paddingVertical: 50,
+                    }}
+                >
+                    <Text
+                        style={{
+                            color: theme.primary,
+                            bottom: 20,
+                            ...container,
+                        }}
+                    >
+                        Choisissez la catégorie de salle:
+                    </Text>
+                    <View
+                        style={{
+                            paddingHorizontal: 15,
+                        }}
+                    >
+                        <Picker
+                            selectedValue={category}
+                            onValueChange={chooseCategory}
+                            mode="dropdown"
+                            style={{
+                                backgroundColor: theme.bgContrast,
+                            }}
+                            dropdownIconColor={theme.primary}
+                        >
+                            <Picker.Item
+                                key={-1}
+                                label={""}
+                                value={-1}
+                                style={{
+                                    color: theme.primary,
+                                    backgroundColor: theme.bgContrast,
+                                }}
+                            />
+                            {categories.map((category, index) => {
+                                return (
+                                    <Picker.Item
+                                        key={index}
+                                        label={category.name}
+                                        value={category.id}
+                                        style={{
+                                            color: theme.primary,
+                                            backgroundColor: theme.bgContrast,
+                                        }}
+                                    />
+                                );
+                            })}
+                        </Picker>
+                    </View>
+                </View>
+                {/*STEP 3: Rooms*/}
+                <View
+                    style={{
+                        top: 50,
+                        display: step === 3 ? "flex" : "none",
+                        paddingVertical: 50,
+                    }}
+                >
+                    <Text
+                        style={{
+                            color: theme.primary,
+                            bottom: 20,
+                            ...container,
+                        }}
+                    >
+                        Choisissez la salle:
+                    </Text>
+                    <View
+                        style={{
+                            paddingHorizontal: 15,
+                        }}
+                    >
+                        <Picker
+                            selectedValue={room}
+                            onValueChange={chooseRoom}
+                            mode="dropdown"
+                            style={{
+                                backgroundColor: theme.bgContrast,
+                            }}
+                            dropdownIconColor={theme.primary}
+                        >
+                            <Picker.Item
+                                key={-1}
+                                label={""}
+                                value={-1}
+                                style={{
+                                    color: theme.primary,
+                                    backgroundColor: theme.bgContrast,
+                                }}
+                            />
+                            {rooms.map((room, index) => {
+                                return (
+                                    <Picker.Item
+                                        key={index}
+                                        label={room.name}
+                                        value={room.id}
+                                        style={{
+                                            color: theme.primary,
+                                            backgroundColor: theme.bgContrast,
+                                        }}
+                                    />
+                                );
+                            })}
+                        </Picker>
+                    </View>
+                </View>
+                {/* Details of equipement of the room */}
+                <View
+                    style={{
+                        top: 50,
+                        display: step === 4 ? "flex" : "none",
+                        paddingVertical: 50,
+                    }}
+                >
+                    <Text
+                        style={{
+                            color: theme.primary,
+                            bottom: 20,
+                            ...container,
+                        }}
+                    >
+                        Voici la configuration de cette salle:
+                    </Text>
+                    <View
+                        style={{
+                            paddingHorizontal: 15,
+                        }}
+                    >
+                        <ScrollView style={{
+                            height: 300
+                        }}>
+                            {/**/}
+                            <View style={{
+                                flexDirection: "row",
+                                height: 45,
+                                alignItems: 'center'
+
+                            }}>
+                                <Text style={{
+                                    color: theme.primary,
+                                    flex: 2,
+                                    borderWidth: 1,
+                                    borderColor: theme.primary,
+                                    paddingVertical: 5,
+                                    paddingLeft: 5
+                                }}>Equipement</Text>
+                                <Text style={{
+                                    color: theme.primary,
+                                    flex: 1,
+                                    borderWidth: 1,
+                                    borderColor: theme.primary,
+                                    paddingVertical: 5,
+                                    paddingLeft: 5
+                                }}>Total</Text>
+                            </View>
+                            {equipement.map((equipement, index) => {
+                                return (
+                                    <View
+                                        key={index}
+                                        style={{
+                                            flexDirection: "row",
+                                            height: 45,
+                                            alignItems: 'center'
+                                        }}
+                                    >
+                                        <Text style={{
+                                            color: theme.primary,
+                                            flex: 2,
+                                            borderWidth: 1,
+                                            borderColor: theme.primary,
+                                            paddingVertical: 5,
+                                            paddingLeft: 5
+                                        }}>{equipement[0]}</Text>
+                                        <Text style={{
+                                            color: theme.primary,
+                                            flex: 1,
+                                            borderWidth: 1,
+                                            borderColor: theme.primary,
+                                            paddingVertical: 5,
+                                            paddingLeft: 5
+                                        }}>{equipement[1]}</Text>
+                                    </View>
+                                );
+                            })}
+
                         </ScrollView>
                     </View>
                 </View>
 
-
+                <Navigation
+                    theme={theme}
+                    step={step}
+                    prevStep={prevStep}
+                    nextStep={nextStep}
+                />
             </View>
+        );
+    return <Loading/>
+};
 
-            <Navigation theme={theme} step={step} prevStep={prevStep} nextStep={nextStep} submit={reserver}/>
-        </View>
-    )
-}
-
-
-export default Rooms;
+export default Reservation;

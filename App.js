@@ -15,7 +15,6 @@ export default function App() {
         }}>
             <ThemeProvider>
                 <GlobalProvider>
-                    <StatusBar/>
                     <Wrapper/>
                 </GlobalProvider>
             </ThemeProvider>

@@ -6,6 +6,7 @@ import {SafeAreaView} from "react-native-safe-area-context";
 import {useContext} from "react";
 import {ThemeContext} from "../context/Theme";
 import {View} from "react-native";
+import TabBar from "./TabBar";
 
 
 export const Wrapper =()=>{
@@ -13,7 +14,8 @@ export const Wrapper =()=>{
     return(
         <SafeAreaView style={{
             flex:1,
-            backgroundColor: theme.bg
+            backgroundColor: theme.bg,
+            paddingTop:15
         }}>
             <View style={{
                 flex:1

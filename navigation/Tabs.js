@@ -6,22 +6,16 @@ import Login from '../screens/Login';
 const {Navigator,Screen} = createBottomTabNavigator();
 import { ThemeContext } from '../context/Theme';
 import Reservation from "../screens/Reservation";
+import TabBar from "../components/TabBar";
 const Tabs = ()=>{
     const colors = useContext(ThemeContext)
     return(
-        <Navigator initialRouteName='Reservation' screenOptions={({route})=>({
+        <Navigator initialRouteName='Home' screenOptions={()=>({
             tabBarShowLabel:false,
             headerShown: false,
             tabBarStyle:{
-                position:'absolute',
-                bottom:20,
-                right:20,
-                left:20,
-                elevation:0,
-                height:70,
-                borderRadius:35,
-                borderTopColor: "transparent",
-                backgroundColor:colors.theme.bgContrast
+
+                display: "none"
             }
         })} >
 
@@ -41,10 +35,8 @@ const Tabs = ()=>{
                 }
             }} />
             <Screen name="Login" component={Login}  options={{
-                tabBarIcon:({focused})=>{
-                    return <AntDesign name="user" size={24} color={colors.theme.primary} style={{
-                        opacity: focused ? 1 : 0.3
-                    }}/>;
+                tabBarIconStyle:{
+                    display:'none'
                 }
             }} />
         </Navigator>
