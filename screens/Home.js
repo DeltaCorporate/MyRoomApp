@@ -13,10 +13,11 @@ const Home = ({navigation}) => {
             flex: 1,
             backgroundColor: colors.theme.bg
         }}>
-            <TabBar navigation={navigation}/>
+
             <Text style={{
                 color: colors.theme.primary
             }}>Home</Text>
+            <TabBar navigation={navigation} bottom={0}/>
         </View>
     )
 }

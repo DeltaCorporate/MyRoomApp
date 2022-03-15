@@ -8,17 +8,17 @@ import Building from "./ReservationSteps/Building";
 import {ReservationProvider} from "../context/Reservation";
 
 
-export default function Reservation() {
+export default function Reservation({navigation}) {
     const {theme} = useContext(ThemeContext);
     return (
         <StepsProvider>
             <ReservationProvider>
                 <View style={{
                     backgroundColor: theme.bg,
-                    flex: 1
+                    flex: 1,
                 }}>
                     <StepBars/>
-                    <Building/>
+                    <Building navigation={navigation}/>
 
                 </View>
             </ReservationProvider>

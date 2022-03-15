@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from "react";
-import {Text, View} from "react-native";
+import {Text, View,TouchableOpacity} from "react-native";
 import {Picker} from "@react-native-picker/picker";
 import {ThemeContext} from "../../context/Theme";
 import {container} from "../../assets/styles/theme";
@@ -8,12 +8,14 @@ import {GlobalsContext} from "../../context/Globals";
 import Loading from "../Loading";
 import {ReservationContext} from "../../context/Reservation";
 import TabBar from "../../components/TabBar";
+import {StepsContext} from "../../context/Steps";
 
 
 export default function Building({navigation}) {
     const [buildings, setBuildings] = useState(null)
     const {theme} = useContext(ThemeContext);
     const {globals} = useContext(GlobalsContext)
+    const {nextStep} = useContext(StepsContext)
 
     const {building,setBuilding} = useContext(ReservationContext);
 
@@ -37,6 +39,7 @@ export default function Building({navigation}) {
         setBuilding(building);
     }
 
+
     useEffect(() => {
         fetchBuildings();
     }, [])
@@ -47,11 +50,10 @@ export default function Building({navigation}) {
         <View
             style={{
                 top: 50,
-                paddingVertical: 50,
-                flex:1
+                flex: 1,
+                paddingTop: 50,
             }}
         >
-            <TabBar navigation={navigation}/>
             <Text
                 style={{
                     color: theme.primary,
@@ -99,6 +101,24 @@ export default function Building({navigation}) {
                     })}
                 </Picker>
             </View>
+
+            <View style={{
+                ...container,
+            }}>
+                <TouchableOpacity style={{
+                    top:50,
+                    backgroundColor: theme.bgContrast,
+                    paddingVertical:10
+                }} activeOpacity={1} onPress={()=>{
+                    nextStep()
+                }} disabled={building === -1} >
+                    <Text style={{
+                        color: theme.primary,
+                        textAlign: 'center',
+                    }}>Suivant</Text>
+                </TouchableOpacity>
+            </View>
+            <TabBar navigation={navigation} bottom={52}/>
         </View>
     )
 }

@@ -55,7 +55,6 @@ function Navigation({theme,step,prevStep,nextStep,submit}){
             }}>
                 <Text style={{
                     color: theme.bg,
-
                     textAlign: "center"
                 }}>
                     Réserver

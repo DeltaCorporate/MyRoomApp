@@ -10,7 +10,7 @@ import TabBar from "../components/TabBar";
 const Tabs = ()=>{
     const colors = useContext(ThemeContext)
     return(
-        <Navigator initialRouteName='Home' screenOptions={()=>({
+        <Navigator initialRouteName='Reservation' screenOptions={()=>({
             tabBarShowLabel:false,
             headerShown: false,
             tabBarStyle:{

@@ -14,8 +14,8 @@ export const colors = {
     },
     "light":{
         "bg":"#E8E8E8",
-        "bgContrast":"#E1E4EC",
-        "primary": "#00AEC6",
+        "bgContrast":"#d9d9d9",
+        "primary": "#00d7f8",
         "primary_50":"rgba(0,174,198,0.8)",
         "reverse":{
             "bg":"#06031A",

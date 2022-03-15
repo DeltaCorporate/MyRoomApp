@@ -1,31 +1,40 @@
-import React, {useContext} from "react";
+import React, {useContext, useEffect} from "react";
 
 import {View, Text, TouchableOpacity} from "react-native"
 import {ThemeContext} from "../context/Theme";
+import {Dimensions} from 'react-native';
+import {useRoute} from "@react-navigation/native";
+import {AntDesign, Entypo} from "@expo/vector-icons";
 
-export default function TabBar({navigation}) {
+export default function TabBar({navigation,bottom}) {
     const {theme} = useContext(ThemeContext);
+    let height = Dimensions.get('window').height;
+    const route = useRoute();
+
+
     return (
         <View style={{
             position: 'absolute',
-            bottom: 80,
-            right: 20,
-            left: 20,
-            elevation: 0,
+            bottom:bottom ,
+            right: 0,
+            left: 0,
             height: 70,
-            borderRadius: 35,
-            borderTopColor: "transparent",
+            borderTopLeftRadius: 25,
+            borderTopRightRadius: 25,
             backgroundColor: theme.bgContrast,
             flexDirection: "row",
             alignItems: "center",
-            justifyContent:"space-evenly"
+            justifyContent: "space-around",
         }}>
-            <TouchableOpacity onPress={()=>navigation.goBack()} >
-                <Text style={{
-                    color: theme.primary
-                }}>
-                    Hello
-                </Text>
+            <TouchableOpacity onPress={() => navigation.navigate("Home")} activeOpacity={1}>
+                <AntDesign name="home" size={24} color={theme.primary} style={{
+                    opacity: route.name === "Home" ? 1 : 0.3
+                }}/>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate("Reservation")} activeOpacity={1}>
+                <Entypo name="list" size={24} color={theme.primary} style={{
+                    opacity: route.name === "Reservation" ? 1 : 0.3
+                }}/>
             </TouchableOpacity>
 
         </View>
