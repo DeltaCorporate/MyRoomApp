@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from "react";
-import {View, Text, TouchableOpacity} from 'react-native'
+import {View, Text, TouchableOpacity, Alert} from 'react-native'
 import {ThemeContext} from "../../context/Theme";
 import StepBars from "./StepBars";
 import TabBar from "../../components/TabBar";
@@ -12,40 +12,57 @@ import {GlobalsContext} from "../../context/Globals";
 import {StepsContext} from "../../context/Steps";
 
 
-export default function Category({navigation}){
+export default function Room({navigation}){
     const {theme} = useContext(ThemeContext)
-
-    const [categories,setCategories] = useState(null)
-    const {category,setCategory} = useContext(ReservationContext);
-    const {step, nextStep,prevStep} = useContext(StepsContext);
+    const [rooms,setRooms] = useState(null)
+    const {room,setRoom,category,setCategory,building,setBuilding} = useContext(ReservationContext);
+    const {step, nextStep,prevStep,setStep} = useContext(StepsContext);
     const {globals} = useContext(GlobalsContext);
 
-    function chooseCategory(category){
-        setCategory(category)
+    function chooseRoom(room){
+        setRoom(room)
     }
 
-    function fetchCategories() {
-        let configCategory = {
-            method: 'get',
-            url: `${globals.api_url}/items/category`,
+    function fetchRooms() {
+        let config = {
+            method: "get",
+            url: `${globals.api_url}/items/room?filter[building]=${building}&filter[category]=${category}`,
             headers: {}
-        };
+        }
+        axios(config).then((response) => {
+            let data = response.data.data;
+            if (data.length <= 0) {
+                Alert.alert('', "Aucune salle de dispo dans ce batiment", [
 
-        axios(configCategory)
-            .then((response) => {
-                setCategories(response.data.data)
-            })
-            .catch((error) => {
-                console.log(error);
-            });
+                    {
+                        text: 'Changer de batiment', onPress: () => {
+                            setStep(1)
+                            setBuilding(-1)
+                            navigation.navigate('Reservation',{screen:"Building"})
+                        }
+                    },
+                    {
+                        text: 'Changer de catégorie', onPress: () => {
+                            prevStep();
+                            setCategory(-1)
+                            navigation.navigate("Category")
+                        }
+                    },
+                ], {cancelable: false});
+            } else {
+                setRooms(data)
+            }
+        }).catch((err) => {
+            console.log(err)
+        })
     }
 
     useEffect(() => {
-        fetchCategories()
+        fetchRooms()
     },[])
 
 
-if(categories === null) return <Loading/>
+    if(rooms === null) return <Loading/>
     return(
         <View style={{
             backgroundColor: theme.bg,
@@ -67,7 +84,7 @@ if(categories === null) return <Loading/>
                         ...container,
                     }}
                 >
-                    Choisissez la catégorie de la salle:
+                    Choisissez la salle:
                 </Text>
                 <View
                     style={{
@@ -75,8 +92,8 @@ if(categories === null) return <Loading/>
                     }}
                 >
                     <Picker
-                        selectedValue={category}
-                        onValueChange={chooseCategory}
+                        selectedValue={room}
+                        onValueChange={chooseRoom}
                         mode="dropdown"
                         style={{
                             backgroundColor: theme.bgContrast,
@@ -92,12 +109,12 @@ if(categories === null) return <Loading/>
                                 backgroundColor: theme.bgContrast,
                             }}
                         />
-                        {categories.map((category, index) => {
+                        {rooms.map((room, index) => {
                             return (
                                 <Picker.Item
                                     key={index}
-                                    label={category.name}
-                                    value={category.id}
+                                    label={room.name}
+                                    value={room.id}
                                     style={{
                                         color: theme.primary,
                                         backgroundColor: theme.bgContrast,
@@ -122,7 +139,7 @@ if(categories === null) return <Loading/>
                         borderRadius: 2,
                     }} activeOpacity={1} onPress={()=>{
                         prevStep()
-                        navigation.navigate("Reservation",{screen:"Building"})
+                        navigation.navigate("Reservation",{screen:"Category"})
                     }} >
                         <Text style={{
                             color: theme.primary,
@@ -136,9 +153,9 @@ if(categories === null) return <Loading/>
                         flex: 1,
                         borderRadius: 2,
                     }} activeOpacity={1} onPress={()=>{
-                        if(step<3) nextStep();
-                        navigation.navigate("Reservation",{screen:"Room"})
-                    }} disabled={category === -1} >
+                        if(step<4) nextStep();
+                        navigation.navigate("Reservation",{screen:"Configuration"})
+                    }} disabled={room === -1} >
                         <Text style={{
                             color: theme.primary,
                             textAlign: 'center',

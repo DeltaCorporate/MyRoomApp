@@ -17,6 +17,7 @@ export const Wrapper =()=>{
             backgroundColor: theme.bg,
             paddingTop:15
         }}>
+            <StatusBar style={theme.statusBar}  hidden={false}/>
             <View style={{
                 flex:1
             }}>

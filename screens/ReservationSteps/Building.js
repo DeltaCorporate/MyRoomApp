@@ -9,13 +9,14 @@ import Loading from "../Loading";
 import {ReservationContext} from "../../context/Reservation";
 import TabBar from "../../components/TabBar";
 import {StepsContext} from "../../context/Steps";
+import StepBars from "./StepBars";
 
 
 export default function Building({navigation}) {
     const [buildings, setBuildings] = useState(null)
     const {theme} = useContext(ThemeContext);
     const {globals} = useContext(GlobalsContext)
-    const {nextStep} = useContext(StepsContext)
+    const {step,nextStep} = useContext(StepsContext)
 
     const {building,setBuilding} = useContext(ReservationContext);
 
@@ -47,78 +48,88 @@ export default function Building({navigation}) {
 
     if (!buildings) return <Loading/>
     return (
-        <View
-            style={{
-                top: 50,
-                flex: 1,
-                paddingTop: 50,
-            }}
-        >
-            <Text
-                style={{
-                    color: theme.primary,
-                    bottom: 20,
-                    ...container,
-                }}
-            >
-                Choisissez le bâtiment:
-            </Text>
+        <View style={{
+            backgroundColor: theme.bg,
+            flex: 1,
+        }}>
+
+            <StepBars/>
             <View
                 style={{
-                    paddingHorizontal: 15,
+                    top: 50,
+                    flex: 1,
+                    paddingTop: 50,
                 }}
             >
-                <Picker
-                    selectedValue={building}
-                    onValueChange={chooseBuilding}
-                    mode="dropdown"
+                <Text
                     style={{
-                        backgroundColor: theme.bgContrast,
+                        color: theme.primary,
+                        bottom: 20,
+                        ...container,
                     }}
-                    dropdownIconColor={theme.primary}
                 >
-                    <Picker.Item
-                        key={-1}
-                        label={""}
-                        value={-1}
+                    Choisissez le bâtiment:
+                </Text>
+                <View
+                    style={{
+                        paddingHorizontal: 15,
+                    }}
+                >
+                    <Picker
+                        selectedValue={building}
+                        onValueChange={chooseBuilding}
+                        mode="dropdown"
                         style={{
-                            color: theme.primary,
                             backgroundColor: theme.bgContrast,
                         }}
-                    />
-                    {buildings.map((building, index) => {
-                        return (
-                            <Picker.Item
-                                key={index}
-                                label={building.name}
-                                value={building.id}
-                                style={{
-                                    color: theme.primary,
-                                    backgroundColor: theme.bgContrast,
-                                }}
-                            />
-                        );
-                    })}
-                </Picker>
+                        dropdownIconColor={theme.primary}
+                    >
+                        <Picker.Item
+                            key={-1}
+                            label={""}
+                            value={-1}
+                            style={{
+                                color: theme.primary,
+                                backgroundColor: theme.bgContrast,
+                            }}
+                        />
+                        {buildings.map((building, index) => {
+                            return (
+                                <Picker.Item
+                                    key={index}
+                                    label={building.name}
+                                    value={building.id}
+                                    style={{
+                                        color: theme.primary,
+                                        backgroundColor: theme.bgContrast,
+                                    }}
+                                />
+                            );
+                        })}
+                    </Picker>
+                </View>
+
+                <View style={{
+                    ...container,
+                }}>
+                    <TouchableOpacity style={{
+                        top:50,
+                        backgroundColor: theme.bgContrast,
+                        paddingVertical:10,
+                        borderRadius: 2
+                    }} activeOpacity={1} onPress={()=>{
+                        if(step<2) nextStep();
+                        navigation.navigate("Reservation",{screen:"Category"})
+                    }} disabled={building === -1} >
+                        <Text style={{
+                            color: theme.primary,
+                            textAlign: 'center',
+                        }}>Suivant</Text>
+                    </TouchableOpacity>
+                </View>
+                <TabBar navigation={navigation} bottom={50}/>
             </View>
 
-            <View style={{
-                ...container,
-            }}>
-                <TouchableOpacity style={{
-                    top:50,
-                    backgroundColor: theme.bgContrast,
-                    paddingVertical:10
-                }} activeOpacity={1} onPress={()=>{
-                    nextStep()
-                }} disabled={building === -1} >
-                    <Text style={{
-                        color: theme.primary,
-                        textAlign: 'center',
-                    }}>Suivant</Text>
-                </TouchableOpacity>
-            </View>
-            <TabBar navigation={navigation} bottom={52}/>
         </View>
     )
 }

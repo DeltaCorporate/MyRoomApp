@@ -5,6 +5,7 @@ export const colors = {
         "primary": "#00ECC2",
         "primary_50":"rgba(0,236,194,0.8)",
         "disabled":"#7F8FA4",
+        "statusBar" : "light",
         "reverse":{
             "bg":"#E8E8E8",
             "bgContrast":"#E1E4EC",
@@ -13,10 +14,11 @@ export const colors = {
         }
     },
     "light":{
-        "bg":"#E8E8E8",
-        "bgContrast":"#d9d9d9",
-        "primary": "#00d7f8",
-        "primary_50":"rgba(0,174,198,0.8)",
+        "bg":"#e0e0e0",
+        "bgContrast":"#cad1de",
+        "primary": "#005bc2",
+        "primary_50":"rgb(0,91,194)",
+        "statusBar":"dark",
         "reverse":{
             "bg":"#06031A",
             "bgContrast":"#0A112C",

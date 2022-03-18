@@ -8,14 +8,13 @@ import {AntDesign, Entypo} from "@expo/vector-icons";
 
 export default function TabBar({navigation,bottom}) {
     const {theme} = useContext(ThemeContext);
-    let height = Dimensions.get('window').height;
     const route = useRoute();
 
 
     return (
         <View style={{
             position: 'absolute',
-            bottom:bottom ,
+            bottom:bottom||0 ,
             right: 0,
             left: 0,
             height: 70,
@@ -33,7 +32,7 @@ export default function TabBar({navigation,bottom}) {
             </TouchableOpacity>
             <TouchableOpacity onPress={() => navigation.navigate("Reservation")} activeOpacity={1}>
                 <Entypo name="list" size={24} color={theme.primary} style={{
-                    opacity: route.name === "Reservation" ? 1 : 0.3
+                    opacity: route.name === "Building" || route.name === "Category" || route.name === "Room"  || route.name === "Configuration" ? 1 : 0.3
                 }}/>
             </TouchableOpacity>
 

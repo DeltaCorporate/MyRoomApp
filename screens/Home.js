@@ -17,7 +17,7 @@ const Home = ({navigation}) => {
             <Text style={{
                 color: colors.theme.primary
             }}>Home</Text>
-            <TabBar navigation={navigation} bottom={0}/>
+            <TabBar navigation={navigation}/>
         </View>
     )
 }

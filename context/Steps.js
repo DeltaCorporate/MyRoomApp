@@ -19,7 +19,7 @@ export const StepsProvider = ({children})=>{
     }
 
     return(
-        <StepsContext.Provider value={{step,nextStep,prevStep}}>
+        <StepsContext.Provider value={{step,nextStep,prevStep,setStep}}>
             {children}
         </StepsContext.Provider>
     );
