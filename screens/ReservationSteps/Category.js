@@ -42,7 +42,7 @@ export default function Category({navigation}){
 
     useEffect(() => {
         fetchCategories()
-    },[])
+    },[categories])
 
 
 if(categories === null) return <Loading/>
@@ -137,6 +137,7 @@ if(categories === null) return <Loading/>
                         borderRadius: 2,
                     }} activeOpacity={1} onPress={()=>{
                         if(step<3) nextStep();
+                        setCategories(null)
                         navigation.navigate("Reservation",{screen:"Room"})
                     }} disabled={category === -1} >
                         <Text style={{

@@ -8,6 +8,7 @@ import {StepsProvider} from "../context/Steps";
 import {ReservationProvider} from "../context/Reservation";
 import {ThemeContext} from "../context/Theme";
 import Configuration from "../screens/ReservationSteps/Configuration";
+import ValidReservation from "../screens/ReservationSteps/ValidReservation";
 
 
 
@@ -31,6 +32,7 @@ export default function ReservationNavigation() {
                         <Screen name="Category" component={Category}/>
                         <Screen name="Room" component={Room}/>
                         <Screen name="Configuration" component={Configuration}/>
+                        <Screen name="ValidReservation" component={ValidReservation}/>
                     </Navigator>
             </ReservationProvider>
         </StepsProvider>

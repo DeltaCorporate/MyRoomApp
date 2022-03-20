@@ -12,7 +12,7 @@ import {GlobalsContext} from "../../context/Globals";
 import {StepsContext} from "../../context/Steps";
 
 
-export default function Room({navigation}){
+export default function Room({navigation,route}){
     const {theme} = useContext(ThemeContext)
     const [rooms,setRooms] = useState(null)
     const {room,setRoom,category,setCategory,building,setBuilding} = useContext(ReservationContext);
@@ -32,23 +32,25 @@ export default function Room({navigation}){
         axios(config).then((response) => {
             let data = response.data.data;
             if (data.length <= 0) {
-                Alert.alert('', "Aucune salle de dispo dans ce batiment", [
+               if(route.name === "Rooms"){
+                   Alert.alert('', "Aucune salle de dispo dans ce batiment", [
 
-                    {
-                        text: 'Changer de batiment', onPress: () => {
-                            setStep(1)
-                            setBuilding(-1)
-                            navigation.navigate('Reservation',{screen:"Building"})
-                        }
-                    },
-                    {
-                        text: 'Changer de catégorie', onPress: () => {
-                            prevStep();
-                            setCategory(-1)
-                            navigation.navigate("Category")
-                        }
-                    },
-                ], {cancelable: false});
+                       {
+                           text: 'Changer de batiment', onPress: () => {
+                               setStep(1)
+                               setBuilding(null)
+                               navigation.navigate('Reservation',{screen:"Building"})
+                           }
+                       },
+                       {
+                           text: 'Changer de catégorie', onPress: () => {
+                               prevStep();
+                               setCategory(null)
+                               navigation.navigate("Category")
+                           }
+                       },
+                   ], {cancelable: false});
+               }
             } else {
                 setRooms(data)
             }
@@ -59,7 +61,7 @@ export default function Room({navigation}){
 
     useEffect(() => {
         fetchRooms()
-    },[])
+    },[rooms])
 
 
     if(rooms === null) return <Loading/>
@@ -154,6 +156,7 @@ export default function Room({navigation}){
                         borderRadius: 2,
                     }} activeOpacity={1} onPress={()=>{
                         if(step<4) nextStep();
+                        setRooms(null)
                         navigation.navigate("Reservation",{screen:"Configuration"})
                     }} disabled={room === -1} >
                         <Text style={{

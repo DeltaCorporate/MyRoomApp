@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from 'react';
 
 
-import {View, Text, ScrollView, FlatList} from "react-native";
+import {View, Text, ScrollView, FlatList, TouchableOpacity} from "react-native";
 import {ThemeContext} from "../../context/Theme";
 import {ReservationContext} from "../../context/Reservation";
 import {StepsContext} from "../../context/Steps";
@@ -15,67 +15,29 @@ import Loading from "../Loading";
 export default function Configuration({navigation}) {
     const {theme} = useContext(ThemeContext)
     const [configurations, setConfigurations] = useState(null);
-    const [confRoom,setConfRoom] = useState(null);
-    const [equipements,setEquipements] = useState(null);
     const {room} = useContext(ReservationContext);
     const {step, nextStep, prevStep} = useContext(StepsContext);
     const {globals} = useContext(GlobalsContext);
-    const [load, setLoad] = useState(false);
 
     const fetchConfig = () => {
         let config = {
             method: "get",
-            url: `${globals.api_url}/items/configuration?filter[room]=${room}`,
+            url: `${globals.api_url}/items/configuration?filter[room]=${room}&fields=*,equipement.*`,
             headers: {}
         }
 
         axios(config).then((r) => {
             let datas = r.data.data;
             setConfigurations(datas)
-            /*datas.forEach(item => {
-                let configEquipement = {
-                    method: "get",
-                    url: `${globals.api_url}/items/equipement/${item.equipement}`,
-                    headers: {}
-                }
-                axios(configEquipement).then((r) => {
-                    let newConfs = configurations || [];
-                    newConfs.push([r.data.data.name, item.total, item.id]);
-                    setConfs(newConfs);
 
-                }).catch(err => {
-                    console.log(err)
-                })
-            })*/
         }).catch(err => {
             console.log(err)
         })
     }
-    const fetEquipement = ()=>{
-        let config = {
-            method: "get",
-            url: `${globals.api_url}/items/equipement`,
-            headers: {}
-        }
-        axios(config).then(r=>{
-            setEquipements(r.data.data);
-        })
-            .catch((err)=>{
-                console.log(err)
-            })
-    }
-    const filterEquipement = ()=>{
-
-    }
     useEffect(() => {
 
         fetchConfig()
-        fetEquipement()
-        setTimeout(() => {
-            setLoad(true)
-        }, 3e3)
-    }, [])
-
+    }, [configurations])
 
 
     function Equipement({equipement, total}) {
@@ -94,7 +56,7 @@ export default function Configuration({navigation}) {
                     borderRightWidth: 1,
                     borderColor: theme.primary,
                     lineHeight: 50,
-                }}>{equipement}</Text>
+                }}>{equipement.name}</Text>
                 <Text style={{
                     color: theme.primary,
                     flex: 1,
@@ -105,16 +67,7 @@ export default function Configuration({navigation}) {
         )
     }
 
-    function list() {
-        return (
-            <FlatList data={configurations} renderItem={renderEquipement} keyExtractor={(item, index) => {
-                return index.toString()
-            }}/>
-        )
-
-    }
-
-    if (!load) return <Loading/>
+    if (!configurations) return <Loading/>
 
 
     return (
@@ -127,6 +80,8 @@ export default function Configuration({navigation}) {
             <View style={{
                 ...container,
                 flex: 1,
+                borderWidth: 1,
+                borderBottomColor: theme.reverse.bg
             }}>
                 <View style={{
                     top: 70,
@@ -154,7 +109,9 @@ export default function Configuration({navigation}) {
                             lineHeight: 50,
                         }}>Total</Text>
                     </View>
-                    <ScrollView>
+                    <ScrollView style={{
+                        maxHeight: 300,
+                    }}>
                         {configurations.map((item, index) => {
                             return (
                                 <Equipement equipement={item.equipement} total={item.total} key={index}/>
@@ -165,7 +122,48 @@ export default function Configuration({navigation}) {
 
 
                 </View>
+
+                <View style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    top: 50
+
+                }}>
+                    <TouchableOpacity style={{
+                        top: 50,
+                        backgroundColor: theme.bgContrast,
+                        paddingVertical: 10,
+                        flex: 1,
+                        marginRight: 10,
+                        borderRadius: 2,
+                    }} activeOpacity={1} onPress={() => {
+                        prevStep()
+                        navigation.navigate("Reservation", {screen: "Room"})
+                    }}>
+                        <Text style={{
+                            color: theme.primary,
+                            textAlign: 'center',
+                        }}>Précédant</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={{
+                        top: 50,
+                        backgroundColor: theme.bgContrast,
+                        paddingVertical: 10,
+                        flex: 1,
+                        borderRadius: 2,
+                    }} activeOpacity={1} onPress={() => {
+                        if (step < 4) nextStep();
+                        setConfigurations(null)
+                        navigation.navigate("Reservation", {screen: "ValidReservation"})
+                    }}>
+                        <Text style={{
+                            color: theme.primary,
+                            textAlign: 'center',
+                        }}>Suivant</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
+
             <TabBar navigation={navigation}/>
         </View>
     )

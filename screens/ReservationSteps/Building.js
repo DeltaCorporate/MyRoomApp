@@ -43,7 +43,8 @@ export default function Building({navigation}) {
 
     useEffect(() => {
         fetchBuildings();
-    }, [])
+
+    }, [buildings])
 
 
     if (!buildings) return <Loading/>
@@ -63,7 +64,7 @@ export default function Building({navigation}) {
             >
                 <Text
                     style={{
-                        color: theme.primary,
+                        color: theme.text_2,
                         bottom: 20,
                         ...container,
                     }}
@@ -82,14 +83,14 @@ export default function Building({navigation}) {
                         style={{
                             backgroundColor: theme.bgContrast,
                         }}
-                        dropdownIconColor={theme.primary}
+                        dropdownIconColor={theme.text_2}
                     >
                         <Picker.Item
                             key={-1}
                             label={""}
                             value={-1}
                             style={{
-                                color: theme.primary,
+                                color: theme.text_1,
                                 backgroundColor: theme.bgContrast,
                             }}
                         />
@@ -100,7 +101,7 @@ export default function Building({navigation}) {
                                     label={building.name}
                                     value={building.id}
                                     style={{
-                                        color: theme.primary,
+                                        color: theme.text_2,
                                         backgroundColor: theme.bgContrast,
                                     }}
                                 />
@@ -114,15 +115,18 @@ export default function Building({navigation}) {
                 }}>
                     <TouchableOpacity style={{
                         top:50,
-                        backgroundColor: theme.bgContrast,
+                        backgroundColor: theme.primary,
                         paddingVertical:10,
                         borderRadius: 2
                     }} activeOpacity={1} onPress={()=>{
                         if(step<2) nextStep();
+                        setBuildings(null)
                         navigation.navigate("Reservation",{screen:"Category"})
                     }} disabled={building === -1} >
                         <Text style={{
-                            color: theme.primary,
+                            color: theme.reverse.text_1,
+                            fontWeight:"bold",
+                            fontSize:16,
                             textAlign: 'center',
                         }}>Suivant</Text>
                     </TouchableOpacity>
