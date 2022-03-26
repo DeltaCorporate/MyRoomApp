@@ -61,7 +61,7 @@ export default function Room({navigation,route}){
 
     useEffect(() => {
         fetchRooms()
-    },[rooms])
+    },[])
 
 
     if(rooms === null) return <Loading/>
@@ -146,7 +146,7 @@ export default function Room({navigation,route}){
                         <Text style={{
                             color: theme.primary,
                             textAlign: 'center',
-                        }}>Précédant</Text>
+                        }}>Précédent</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={{
                         top:50,

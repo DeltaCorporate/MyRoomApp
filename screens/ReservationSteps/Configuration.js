@@ -37,7 +37,7 @@ export default function Configuration({navigation}) {
     useEffect(() => {
 
         fetchConfig()
-    }, [configurations])
+    }, [])
 
 
     function Equipement({equipement, total}) {
@@ -143,7 +143,7 @@ export default function Configuration({navigation}) {
                         <Text style={{
                             color: theme.primary,
                             textAlign: 'center',
-                        }}>Précédant</Text>
+                        }}>Précédent</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={{
                         top: 50,

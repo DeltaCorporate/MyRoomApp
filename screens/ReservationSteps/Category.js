@@ -42,7 +42,7 @@ export default function Category({navigation}){
 
     useEffect(() => {
         fetchCategories()
-    },[categories])
+    },[])
 
 
 if(categories === null) return <Loading/>
@@ -127,7 +127,7 @@ if(categories === null) return <Loading/>
                         <Text style={{
                             color: theme.primary,
                             textAlign: 'center',
-                        }}>Précédant</Text>
+                        }}>Précédent</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={{
                         top:50,

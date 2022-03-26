@@ -44,7 +44,7 @@ export default function Building({navigation}) {
     useEffect(() => {
         fetchBuildings();
 
-    }, [buildings])
+    }, [])
 
 
     if (!buildings) return <Loading/>
@@ -90,7 +90,7 @@ export default function Building({navigation}) {
                             label={""}
                             value={-1}
                             style={{
-                                color: theme.text_1,
+                                color: theme.text_2,
                                 backgroundColor: theme.bgContrast,
                             }}
                         />

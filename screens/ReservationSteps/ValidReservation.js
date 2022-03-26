@@ -124,7 +124,7 @@ export default function ValidReservation({navigation}) {
                     <Text style={{
                         color: theme.primary,
                         textAlign: 'center',
-                    }}>Précédant</Text>
+                    }}>Précédent</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={{
                     top: 50,
