@@ -136,8 +136,7 @@ if(categories === null) return <Loading/>
                         flex: 1,
                         borderRadius: 2,
                     }} activeOpacity={1} onPress={()=>{
-                        if(step<3) nextStep();
-                        setCategories(null)
+                        if(step<4) nextStep();
                         navigation.navigate("Reservation",{screen:"Room"})
                     }} disabled={category === -1} >
                         <Text style={{

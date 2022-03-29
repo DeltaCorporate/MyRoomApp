@@ -16,7 +16,7 @@ export default function Building({navigation}) {
     const [buildings, setBuildings] = useState(null)
     const {theme} = useContext(ThemeContext);
     const {globals} = useContext(GlobalsContext)
-    const {step,nextStep} = useContext(StepsContext)
+    const {step,prevStep,nextStep} = useContext(StepsContext)
 
     const {building,setBuilding} = useContext(ReservationContext);
 
@@ -109,23 +109,39 @@ export default function Building({navigation}) {
                         })}
                     </Picker>
                 </View>
-
                 <View style={{
                     ...container,
+                    flexDirection: 'row',
+                    alignItems: 'center',
                 }}>
                     <TouchableOpacity style={{
                         top:50,
-                        backgroundColor: theme.primary,
+                        backgroundColor: theme.bgContrast,
                         paddingVertical:10,
-                        borderRadius: 2
+                        flex: 1,
+                        marginRight: 10,
+                        borderRadius: 2,
                     }} activeOpacity={1} onPress={()=>{
-                        if(step<2) nextStep();
+                        prevStep()
+                        navigation.navigate("Reservation",{screen:"Interval"})
+                    }} >
+                        <Text style={{
+                            color: theme.primary,
+                            textAlign: 'center',
+                        }}>Précédent</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={{
+                        top:50,
+                        backgroundColor: theme.bgContrast,
+                        paddingVertical:10,
+                        flex: 1,
+                        borderRadius: 2,
+                    }} activeOpacity={1} onPress={()=>{
+                        if(step<4) nextStep();
                         navigation.navigate("Reservation",{screen:"Category"})
                     }} disabled={building === -1} >
                         <Text style={{
-                            color: theme.reverse.text_1,
-                            fontWeight:"bold",
-                            fontSize:16,
+                            color: theme.primary,
                             textAlign: 'center',
                         }}>Suivant</Text>
                     </TouchableOpacity>

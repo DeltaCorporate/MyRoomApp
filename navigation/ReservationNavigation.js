@@ -6,21 +6,20 @@ import Category from "../screens/ReservationSteps/Category";
 import Room from "../screens/ReservationSteps/Room";
 import {StepsProvider} from "../context/Steps";
 import {ReservationProvider} from "../context/Reservation";
-import {ThemeContext} from "../context/Theme";
 import Configuration from "../screens/ReservationSteps/Configuration";
 import ValidReservation from "../screens/ReservationSteps/ValidReservation";
+import Interval from "../screens/ReservationSteps/Interval";
 
 
 
 
 export default function ReservationNavigation() {
     const {Navigator, Screen} = createBottomTabNavigator();
-    const {theme} = useContext(ThemeContext);
     return (
         <StepsProvider>
             <ReservationProvider>
 
-                    <Navigator initialRouteName='Building' screenOptions={() => ({
+                    <Navigator initialRouteName='Interval' screenOptions={() => ({
                         tabBarShowLabel: false,
                         headerShown: false,
                         tabBarStyle: {
@@ -28,6 +27,7 @@ export default function ReservationNavigation() {
                             display: "none"
                         }
                     })}>
+                        <Screen name="Interval" component={Interval}/>
                         <Screen name="Building" component={Building}/>
                         <Screen name="Category" component={Category}/>
                         <Screen name="Room" component={Room}/>

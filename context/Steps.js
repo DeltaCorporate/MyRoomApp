@@ -8,7 +8,7 @@ export const StepsContext = createContext();
 
 
 export const StepsProvider = ({children})=>{
-    const [step,setStep] =useState(1);
+    const [step,setStep] =useState(-1);
 
     function nextStep(){
         setStep(step+1);

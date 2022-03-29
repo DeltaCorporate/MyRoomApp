@@ -15,7 +15,7 @@ import StepBars from "./StepBars";
 
 export default function ValidReservation({navigation}) {
     const {theme} = useContext(ThemeContext)
-    const {building, room, category,setBuilding,setRoom,setCategory} = useContext(ReservationContext)
+    const {building, room, category,setBuilding,setRoom,setCategory,startTime,endTime} = useContext(ReservationContext)
     const [roomData, setRoomData] = useState(null);
     const [buildingData, setBuildingData] = useState(null);
     const {globals} = useContext(GlobalsContext)
@@ -51,7 +51,9 @@ export default function ValidReservation({navigation}) {
         let data = JSON.stringify({
             "room": room,
             "building": building,
-            "category": category
+            "category": category,
+            "startTime":startTime,
+            "endTime":endTime
         })
         let config = {
             method: 'post',

@@ -19,6 +19,8 @@ export default function StepBars(){
                 top: 40,
             }}
         >
+            <Step theme={theme} step={step} value={0}/>
+            <SeparatorStep theme={theme} step={step} value={0}/>
             <Step theme={theme} step={step} value={1}/>
             <SeparatorStep theme={theme} step={step} value={1}/>
             <Step theme={theme} step={step} value={2}/>

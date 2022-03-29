@@ -152,8 +152,7 @@ export default function Configuration({navigation}) {
                         flex: 1,
                         borderRadius: 2,
                     }} activeOpacity={1} onPress={() => {
-                        if (step < 4) nextStep();
-                        setConfigurations(null)
+                        if (step < 5) nextStep();
                         navigation.navigate("Reservation", {screen: "ValidReservation"})
                     }}>
                         <Text style={{

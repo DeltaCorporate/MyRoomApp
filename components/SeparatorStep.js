@@ -8,7 +8,7 @@ function SeparatorStep({theme, step,value}) {
         <View style={{
             backgroundColor: theme.primary,
             height: 2,
-            minWidth: 63,
+            minWidth: 45,
             borderRadius: 1,
             opacity: step > value ? 1 : 0.5
         }}>

@@ -30,9 +30,9 @@ export default function TabBar({navigation,bottom}) {
                     opacity: route.name === "Home" ? 1 : 0.3
                 }}/>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate("Reservation",{screen:"Building"})} activeOpacity={1}>
+            <TouchableOpacity onPress={() => navigation.navigate("Reservation",{screen:"Interval"})} activeOpacity={1}>
                 <Entypo name="list" size={24} color={theme.primary} style={{
-                    opacity: route.name === "Building" || route.name === "Category" || route.name === "Room"  || route.name === "Configuration" || route.name === "ValidReservation" ? 1 : 0.3
+                    opacity: route.name === "Building" ||route.name === "Interval" || route.name === "Category" || route.name === "Room"  || route.name === "Configuration" || route.name === "ValidReservation" ? 1 : 0.3
                 }}/>
             </TouchableOpacity>
 

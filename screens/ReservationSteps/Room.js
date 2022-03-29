@@ -15,18 +15,53 @@ import {StepsContext} from "../../context/Steps";
 export default function Room({navigation,route}){
     const {theme} = useContext(ThemeContext)
     const [rooms,setRooms] = useState(null)
-    const {room,setRoom,category,setCategory,building,setBuilding} = useContext(ReservationContext);
+    const {room,setRoom,category,setCategory,building,setBuilding,startTime,endTime} = useContext(ReservationContext);
     const {step, nextStep,prevStep,setStep} = useContext(StepsContext);
     const {globals} = useContext(GlobalsContext);
 
     function chooseRoom(room){
-        setRoom(room)
+        let possible = false;
+        if(room<0)
+        {
+            setRoom(room)
+            return;
+        }
+        let config = {
+            method: "get",
+            url: `${globals.api_url}/items/room/${room}?filter[building]=${building}&filter[category]=${category}&fields=*,reservations.*`,
+            headers: {}
+        }
+        let roomData = axios(config).then(r=>{
+            r.data.data.reservations.forEach((r)=>{
+                let start = new Date(r.startTime);
+                let end = new Date(r.endTime);
+                let startTimeChoosed = new Date(startTime)
+                let endTimeChoosed = new Date(endTime);
+                if((startTimeChoosed<start && endTimeChoosed <start) || (startTimeChoosed>end && endTimeChoosed >end) ){
+                    possible = true;
+                    setRoom(room)
+                }
+            })
+            if(!possible){
+                Alert.alert('', "La salle est déjà occupé à cette période", [
+
+                    {
+                        text: 'Changer le temps de réservation', onPress: () => {
+                            setStep(0)
+                            setBuilding(null)
+                            navigation.navigate('Reservation',{screen:"Interval"})
+                        }
+                    },
+                ], {cancelable: false});
+            }
+        }).catch(err=>{console.log(err)})
+
     }
 
     function fetchRooms() {
         let config = {
             method: "get",
-            url: `${globals.api_url}/items/room?filter[building]=${building}&filter[category]=${category}`,
+            url: `${globals.api_url}/items/room?filter[building]=${building}&filter[category]=${category}&fields=*,reservations.*`,
             headers: {}
         }
         axios(config).then((response) => {
@@ -37,7 +72,7 @@ export default function Room({navigation,route}){
 
                        {
                            text: 'Changer de batiment', onPress: () => {
-                               setStep(1)
+                               setStep(2)
                                setBuilding(null)
                                navigation.navigate('Reservation',{screen:"Building"})
                            }
@@ -155,8 +190,7 @@ export default function Room({navigation,route}){
                         flex: 1,
                         borderRadius: 2,
                     }} activeOpacity={1} onPress={()=>{
-                        if(step<4) nextStep();
-                        setRooms(null)
+                        if(step<5) nextStep();
                         navigation.navigate("Reservation",{screen:"Configuration"})
                     }} disabled={room === -1} >
                         <Text style={{

@@ -17,7 +17,6 @@ const Tabs = () => {
 
             headerShown: false,
             tabBarStyle: {
-
                 display: "none"
             }
         })}>
