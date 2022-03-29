@@ -3,12 +3,13 @@ import React,{useState,useContext} from "react";
 
 import {View, Text} from "react-native";
 import {ThemeContext} from "../../context/Theme";
+import {ReservationContext} from "../../context/Reservation";
 
-
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 
 export default function Interval({navigation}){
-    const [startTime, setStartTime] = useState(null);
+    const {startTime,setStartTime,endTime,setEndTime} = useContext(ReservationContext);
 
 
     const {theme} = useContext(ThemeContext);

@@ -120,7 +120,6 @@ export default function Building({navigation}) {
                         borderRadius: 2
                     }} activeOpacity={1} onPress={()=>{
                         if(step<2) nextStep();
-                        setBuildings(null)
                         navigation.navigate("Reservation",{screen:"Category"})
                     }} disabled={building === -1} >
                         <Text style={{
