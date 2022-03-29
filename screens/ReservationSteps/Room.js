@@ -37,9 +37,11 @@ export default function Room({navigation,route}){
                 let end = new Date(r.endTime);
                 let startTimeChoosed = new Date(startTime)
                 let endTimeChoosed = new Date(endTime);
-                if((startTimeChoosed<start && endTimeChoosed <start) || (startTimeChoosed>end && endTimeChoosed >end) ){
+                if((startTimeChoosed<start && endTimeChoosed <start) || (startTimeChoosed>end && endTimeChoosed>end) ){
                     possible = true;
                     setRoom(room)
+                } else{
+                    possible = false
                 }
             })
             if(!possible){
@@ -48,11 +50,11 @@ export default function Room({navigation,route}){
                     {
                         text: 'Changer le temps de réservation', onPress: () => {
                             setStep(0)
-                            setBuilding(null)
+                            setRoom(-1)
                             navigation.navigate('Reservation',{screen:"Interval"})
                         }
                     },
-                ], {cancelable: false});
+                ]);
             }
         }).catch(err=>{console.log(err)})
 

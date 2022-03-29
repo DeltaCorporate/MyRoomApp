@@ -103,7 +103,7 @@ export default function ValidReservation({navigation}) {
                 ...container
 
             }}>
-                Validez vous souhaiter réserver la salle {roomData.name} dans le bâtiment {buildingData.name}
+                Validez vous souhaiter réserver la salle {roomData.name} dans le bâtiment {buildingData.name} du {startTime.getDate() >9 ? startTime.getDate() : "0"+startTime.getDate()}/{startTime.getMonth() >9 ? startTime.getMonth() : "0"+startTime.getMonth()}/{startTime.getFullYear()} au {endTime.getDate() >9 ? endTime.getDate() : "0"+endTime.getDate()}/{endTime.getMonth()>9 ? endTime.getMonth(): "0"+endTime.getMonth()}/{endTime.getFullYear()}.
             </Text>
             <View style={{
                 flexDirection: 'row',
