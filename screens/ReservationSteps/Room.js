@@ -20,7 +20,7 @@ export default function Room({navigation,route}){
     const {globals} = useContext(GlobalsContext);
 
     function chooseRoom(room){
-        let possible = false;
+        let possible = true;
         if(room<0)
         {
             setRoom(room)
@@ -31,7 +31,7 @@ export default function Room({navigation,route}){
             url: `${globals.api_url}/items/room/${room}?filter[building]=${building}&filter[category]=${category}&fields=*,reservations.*`,
             headers: {}
         }
-        let roomData = axios(config).then(r=>{
+        axios(config).then(r=>{
             r.data.data.reservations.forEach((r)=>{
                 let start = new Date(r.startTime);
                 let end = new Date(r.endTime);
@@ -39,7 +39,6 @@ export default function Room({navigation,route}){
                 let endTimeChoosed = new Date(endTime);
                 if((startTimeChoosed<start && endTimeChoosed <start) || (startTimeChoosed>end && endTimeChoosed>end) ){
                     possible = true;
-                    setRoom(room)
                 } else{
                     possible = false
                 }
@@ -55,6 +54,8 @@ export default function Room({navigation,route}){
                         }
                     },
                 ]);
+            } else{
+                setRoom(room)
             }
         }).catch(err=>{console.log(err)})
 
